@@ -103,7 +103,7 @@ function PArrow({ x1, y1, x2, y2 }) {
 
 function S_Cover() {
   return (<div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 56px", position: "relative", background: "linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)" }}>
-    <div style={{ position: "absolute", top: 0, right: 0, width: 400, height: 400, background: "radial-gradient(circle, " + BLUE + "06 0%, transparent 70%)", pointerEvents: "none" }} />
+    <img src="/vectors/partnership.png" alt="" style={{ position: "absolute", right: 40, bottom: 60, width: 340, opacity: 0.85, pointerEvents: "none" }} />
     <div style={{ position: "absolute", top: 36, left: 56, display: "flex", alignItems: "center", gap: 16 }}>
       <img src={FOUNDER_IMG.LOGO} alt="Celebso" width={32} height={32} style={{ borderRadius: 6 }} />
       <span style={{ fontWeight: 800, fontSize: 22, color: DARK, letterSpacing: "-0.5px" }}>CELEBSO</span>
@@ -143,6 +143,9 @@ function S_Alignment() {
   ];
   return (<div style={{ padding: "96px 56px" }}>
     <SH label="Vision Alignment" num={1} />
+    <div style={{ marginBottom: 36, textAlign: "center" }}>
+      <img src="/vectors/community.png" alt="Celebso Creator Ecosystem" style={{ width: "100%", maxWidth: 700, opacity: 0.9 }} />
+    </div>
     <h2 style={{ fontSize: 36, fontWeight: 700, color: DARK, margin: "0 0 14px 0", lineHeight: 1.2, letterSpacing: "-1px" }}>We've Studied Your Journey. We Understand Your Vision.</h2>
     <p style={{ fontSize: 15, color: T2, lineHeight: 1.8, maxWidth: 660, margin: "0 0 40px 0" }}>Before writing a single line of code, we conducted a thorough audit of Celebso's public presence, founder communications, community-building efforts, and strategic positioning over the past 12+ months. What we found was not just a product concept — but a deeply held conviction to democratize opportunity for India's creators and entrepreneurs.</p>
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
@@ -185,6 +188,13 @@ function S_Product() {
     <SH label="Product Blueprint" num={3} />
     <h2 style={{ fontSize: 36, fontWeight: 700, color: DARK, margin: "0 0 14px 0", letterSpacing: "-1px" }}>Where LinkedIn Meets Instagram — Purpose-Built for India</h2>
     <p style={{ fontSize: 15, color: T2, lineHeight: 1.8, maxWidth: 660, margin: "0 0 40px 0" }}>One platform: create content, build following, join communities, attend events, grow career.</p>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24, marginBottom: 36 }}>
+      {[{src:"/vectors/content-feed.png",label:"Categorized Content Feed",desc:"Music, Tech, Comedy, Art — category tabs with curated content cards"},{src:"/vectors/reels-player.png",label:"Video & Reels Player",desc:"Vertical swipe player with adaptive bitrate HLS streaming"},{src:"/vectors/creator-profile.png",label:"Creator Profiles",desc:"Portfolio with skill tags, verified badge, and content grid"}].map((v,i)=>(<Card key={i} style={{textAlign:"center",padding:20}}>
+        <img src={v.src} alt={v.label} style={{width:"100%",maxWidth:180,margin:"0 auto 16px",display:"block"}} />
+        <div style={{fontSize:14,fontWeight:700,color:DARK,marginBottom:4}}>{v.label}</div>
+        <div style={{fontSize:11,color:T2,lineHeight:1.5}}>{v.desc}</div>
+      </Card>))}
+    </div>
     <Card style={{marginBottom:32,background:"#f0f4ff",borderColor:BLUE+"20"}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}><span style={{color:BLUE}}>{Icon.layout}</span><span style={{fontSize:13,fontWeight:700,color:BLUE}}>Existing App Reference — Mobile Screens (From Celebso Current Build)</span></div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:14}}>
@@ -398,8 +408,13 @@ function S_Data() {
 function S_Trending() {
   return (<div style={{ padding: "96px 56px" }}>
     <SH label="Virality, Events & Community" num={6} />
-    <h2 style={{ fontSize: 36, fontWeight: 700, color: DARK, margin: "0 0 14px 0", letterSpacing: "-1px" }}>How Discovery, Trending & Communities Work</h2>
-    <p style={{ fontSize: 15, color: T2, lineHeight: 1.8, maxWidth: 660, margin: "0 0 36px 0" }}>The core differentiator — surfacing emerging talent across categories.</p>
+    <div style={{ display: "flex", alignItems: "center", gap: 36, marginBottom: 36 }}>
+      <div style={{ flex: 1 }}>
+        <h2 style={{ fontSize: 36, fontWeight: 700, color: DARK, margin: "0 0 14px 0", letterSpacing: "-1px" }}>How Discovery, Trending & Communities Work</h2>
+        <p style={{ fontSize: 15, color: T2, lineHeight: 1.8, maxWidth: 520, margin: 0 }}>The core differentiator — surfacing emerging talent across categories.</p>
+      </div>
+      <img src="/vectors/virality.png" alt="Virality Engine" style={{ width: 220, flexShrink: 0, opacity: 0.9 }} />
+    </div>
     <Card style={{marginBottom:32,overflowX:"auto"}}>
       <div style={{fontSize:10,fontWeight:700,color:DARK,letterSpacing:2,textTransform:"uppercase",marginBottom:20,fontFamily:"'JetBrains Mono',monospace"}}>FIG. 3 — TRENDING / VIRALITY + COMMUNITY + EVENT SYSTEM</div>
       <svg viewBox="0 0 880 380" style={{width:"100%",maxWidth:880}}>
