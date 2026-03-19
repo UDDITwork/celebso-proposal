@@ -42,7 +42,7 @@ const puppeteer = require("puppeteer");
   await new Promise(r => setTimeout(r, 2000));
 
   await page.pdf({
-    path: "C:\\Users\\Uddit\\Downloads\\Celebso-Technical-Proposal.pdf",
+    path: "C:\\Users\\Uddit\\Downloads\\Celebso-Proposal-v2.pdf",
     format: "A4",
     printBackground: true,
     margin: { top: "0", bottom: "0", left: "0", right: "0" },

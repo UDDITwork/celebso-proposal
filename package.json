@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@vercel/og": "^0.11.1",
     "next": "16.1.7",
     "puppeteer": "^24.39.1",
     "react": "19.2.3",
