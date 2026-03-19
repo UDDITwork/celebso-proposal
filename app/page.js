@@ -1,6 +1,22 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
+import { createContext, useContext } from "react";
+
+function useIsMobile(bp = 768) {
+  const [m, setM] = useState(false);
+  useEffect(() => {
+    const c = () => setM(window.innerWidth <= bp);
+    c();
+    window.addEventListener("resize", c);
+    return () => window.removeEventListener("resize", c);
+  }, [bp]);
+  return m;
+}
+
+const MobileCtx = createContext(false);
+function useM() { return useContext(MobileCtx); }
+
 const BLUE = "#1e40af";
 const DARK = "#0f172a";
 const BODY = "#475569";
@@ -22,7 +38,7 @@ function Img({ src, size = 48, alt = "" }) {
 }
 
 function Sec({ children, bg = BG1, id }) {
-  return <div id={id} style={{ padding: "100px 0", background: bg }}><div style={{ maxWidth: 960, margin: "0 auto", padding: "0 48px" }}>{children}</div></div>;
+  return <div id={id} style={{ padding: "var(--sec-pad) 0", background: bg }}><div style={{ maxWidth: 960, margin: "0 auto", padding: "0 var(--pad)" }}>{children}</div></div>;
 }
 
 function Label({ text }) {
@@ -46,33 +62,34 @@ function PArrow({ x1, y1, x2, y2 }) {
 
 /* ===== COVER ===== */
 function S_Cover() {
-  return (<div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "80px 48px", position: "relative", background: BG1 }}>
-    <img src="/vectors/partnership.png" alt="" style={{ position: "absolute", right: 48, bottom: 80, width: 300, opacity: 0.7, pointerEvents: "none" }} />
-    <div style={{ position: "absolute", top: 40, left: 48, display: "flex", alignItems: "center", gap: 14 }}>
+  const m = useM();
+  return (<div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: m ? "80px 20px" : "80px 48px", position: "relative", background: BG1 }}>
+    {!m && <img src="/vectors/partnership.png" alt="" style={{ position: "absolute", right: 48, bottom: 80, width: 300, opacity: 0.7, pointerEvents: "none" }} />}
+    <div style={{ position: "absolute", top: m ? 20 : 40, left: m ? 20 : 48, display: "flex", alignItems: "center", gap: 14 }}>
       <img src={FOUNDER_IMG.LOGO} alt="Celebso" width={28} height={28} style={{ borderRadius: 6 }} />
       <span style={{ fontWeight: 700, fontSize: 18, color: DARK, letterSpacing: "-0.3px" }}>CELEBSO</span>
-      <span style={{ fontSize: 9, color: MUTED, fontFamily: MONO, letterSpacing: 2, marginLeft: 8 }}>CONFIDENTIAL</span>
+      {!m && <span style={{ fontSize: 9, color: MUTED, fontFamily: MONO, letterSpacing: 2, marginLeft: 8 }}>CONFIDENTIAL</span>}
     </div>
     <div style={{ maxWidth: 640, position: "relative", zIndex: 1 }}>
-      <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: "3px", textTransform: "uppercase", color: MUTED, marginBottom: 32, fontFamily: MONO }}>Technical Proposal</div>
-      <h1 style={{ fontSize: 56, fontWeight: 300, color: DARK, lineHeight: 1.08, margin: "0 0 28px 0", letterSpacing: "-2px" }}>
+      <div style={{ fontSize: m ? 10 : 11, fontWeight: 500, letterSpacing: "3px", textTransform: "uppercase", color: MUTED, marginBottom: m ? 20 : 32, fontFamily: MONO }}>Technical Proposal</div>
+      <h1 style={{ fontSize: m ? 32 : 56, fontWeight: 300, color: DARK, lineHeight: 1.08, margin: "0 0 20px 0", letterSpacing: m ? "-1px" : "-2px" }}>
         Building India's Stage for 100 Million+ <span style={{ fontWeight: 700, color: BLUE }}>Dreamers</span>
       </h1>
-      <p style={{ fontSize: 17, color: BODY, lineHeight: 1.9, maxWidth: 520, margin: "0 0 56px 0" }}>
+      <p style={{ fontSize: m ? 15 : 17, color: BODY, lineHeight: 1.9, maxWidth: 520, margin: m ? "0 0 36px 0" : "0 0 56px 0" }}>
         A comprehensive technical blueprint and development partnership proposal for Celebso — where LinkedIn meets Instagram, purpose-built for India's creator and startup ecosystem.
       </p>
-      <div style={{ display: "flex", gap: 32, marginBottom: 48, alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: m ? "column" : "row", gap: m ? 20 : 32, marginBottom: m ? 32 : 48 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <Img src={FOUNDER_IMG.VS} size={48} alt="Er. Veer Singh" />
+          <Img src={FOUNDER_IMG.VS} size={44} alt="Er. Veer Singh" />
           <div><div style={{ fontSize: 14, fontWeight: 600, color: DARK }}>Er. Veer Singh</div><div style={{ fontSize: 12, color: MUTED }}>Founder & CEO</div></div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <Img src={FOUNDER_IMG.PK} size={48} alt="Pradeep Kumar Bijarniya" />
+          <Img src={FOUNDER_IMG.PK} size={44} alt="Pradeep Kumar Bijarniya" />
           <div><div style={{ fontSize: 14, fontWeight: 600, color: DARK }}>Pradeep Kumar Bijarniya</div><div style={{ fontSize: 12, color: MUTED }}>Co-Founder</div></div>
         </div>
       </div>
-      <div style={{ display: "flex", gap: 56, paddingTop: 32, borderTop: "1px solid " + BORDER }}>
-        {[{l:"Prepared By",v:"Uddit",s:"AI Engineer & Full Stack Developer"},{l:"Date",v:"18 March 2026",s:"REF: CBL-2026-0318"},{l:"Profile",v:"celebso.com",s:"linkedin.com/company/celebso"}].map((d,i)=>(<div key={i}><div style={{fontSize:9,fontWeight:600,letterSpacing:2,color:MUTED,textTransform:"uppercase",marginBottom:6,fontFamily:MONO}}>{d.l}</div><div style={{fontSize:14,fontWeight:600,color:DARK}}>{d.v}</div><div style={{fontSize:12,color:BODY,marginTop:2}}>{d.s}</div></div>))}
+      <div style={{ display: "flex", flexDirection: m ? "column" : "row", gap: m ? 20 : 56, paddingTop: 24, borderTop: "1px solid " + BORDER }}>
+        {[{l:"Prepared By",v:"Uddit",s:"AI Engineer & Full Stack Developer"},{l:"Date",v:"18 March 2026",s:"REF: CBL-2026-0318"},{l:"Profile",v:"celebso.com",s:"linkedin.com/company/celebso"}].map((d,i)=>(<div key={i}><div style={{fontSize:9,fontWeight:600,letterSpacing:2,color:MUTED,textTransform:"uppercase",marginBottom:4,fontFamily:MONO}}>{d.l}</div><div style={{fontSize:14,fontWeight:600,color:DARK}}>{d.v}</div><div style={{fontSize:12,color:BODY,marginTop:2}}>{d.s}</div></div>))}
       </div>
     </div>
   </div>);
@@ -86,21 +103,22 @@ function S_Alignment() {
     {author:"Er. Veer Singh",role:"Founder & CEO",img:FOUNDER_IMG.VS,text:"In the new Work-Based Economy, Celebso is your launchpad. Show your skills. Get noticed. Become a star. Not just looks. Not just likes. Real Work = Real Fame.",date:"Aug 2025",src:"LinkedIn"},
     {author:"Pradeep Kumar Bijarniya",role:"Co-Founder",img:FOUNDER_IMG.PK,text:"Not long ago, Celebso was just a vision — a platform where entrepreneurs, investors, creators, and brands could come together. We didn't just build a brand. We built a belief system.",date:"Aug 2025",src:"LinkedIn"},
   ];
+  const m = useM();
   return (<Sec bg={BG2} id="vision">
     <Label text="01 — Vision Alignment" />
     <div style={{ textAlign: "center", marginBottom: 48 }}>
       <img src="/vectors/community.png" alt="" style={{ width: "100%", maxWidth: 640, opacity: 0.85 }} />
     </div>
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 16px 0", lineHeight: 1.2, letterSpacing: "-1px" }}>We've Studied Your Journey.<br/><span style={{ fontWeight: 700 }}>We Understand Your Vision.</span></h2>
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 16px 0", lineHeight: 1.2, letterSpacing: "-1px" }}>We've Studied Your Journey.<br/><span style={{ fontWeight: 700 }}>We Understand Your Vision.</span></h2>
     <p style={{ fontSize: 15, color: BODY, lineHeight: 1.9, maxWidth: 600, margin: "0 0 48px 0" }}>Before writing a single line of code, we conducted a thorough audit of Celebso's public presence, founder communications, and strategic positioning over the past 12+ months.</p>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
-      {quotes.map((q,i)=>(<div key={i} style={{ paddingBottom: 28, borderBottom: "1px solid " + BORDER }}>
+    <div style={{ display: "grid", gridTemplateColumns: m ? "1fr" : "1fr 1fr", gap: m ? 24 : 32 }}>
+      {quotes.map((q,i)=>(<div key={i} style={{ paddingBottom: 24, borderBottom: "1px solid " + BORDER }}>
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
           <Img src={q.img} size={36} alt={q.author} />
           <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:DARK}}>{q.author}</div><div style={{fontSize:11,color:MUTED}}>{q.role}</div></div>
           <span style={{fontSize:10,color:MUTED,fontFamily:MONO}}>{q.date}</span>
         </div>
-        <p style={{fontSize:14,color:BODY,lineHeight:1.8,margin:0,paddingLeft:48,fontStyle:"italic"}}>"{q.text}"</p>
+        <p style={{fontSize:14,color:BODY,lineHeight:1.8,margin:0,paddingLeft:m ? 0 : 48,fontStyle:"italic"}}>"{q.text}"</p>
       </div>))}
     </div>
   </Sec>);
@@ -108,11 +126,12 @@ function S_Alignment() {
 
 /* ===== MARKET ===== */
 function S_Market() {
+  const m = useM();
   return (<Sec id="market">
     <Label text="02 — Market Landscape" />
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 48px 0", letterSpacing: "-1px" }}>The White Space <span style={{ fontWeight: 700 }}>Celebso Fills</span></h2>
-    <div style={{ display: "flex", gap: 48, marginBottom: 56 }}>
-      {[{m:"$100B+",l:"Creator economy by 2030"},{m:"100M+",l:"Creators in India"},{m:"900M+",l:"Internet users"},{m:"Zero",l:"Platforms unifying LinkedIn + Instagram for India"}].map((d,i)=>(<div key={i} style={{flex:1}}><div style={{fontSize:36,fontWeight:800,color:BLUE,letterSpacing:"-1px"}}>{d.m}</div><div style={{fontSize:13,color:BODY,marginTop:6,lineHeight:1.5}}>{d.l}</div></div>))}
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 36px 0", letterSpacing: "-1px" }}>The White Space <span style={{ fontWeight: 700 }}>Celebso Fills</span></h2>
+    <div style={{ display: "grid", gridTemplateColumns: m ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: m ? 24 : 48, marginBottom: m ? 36 : 56 }}>
+      {[{m:"$100B+",l:"Creator economy by 2030"},{m:"100M+",l:"Creators in India"},{m:"900M+",l:"Internet users"},{m:"Zero",l:"Platforms unifying LinkedIn + Instagram for India"}].map((d,i)=>(<div key={i}><div style={{fontSize: m ? 28 : 36,fontWeight:800,color:BLUE,letterSpacing:"-1px"}}>{d.m}</div><div style={{fontSize:13,color:BODY,marginTop:6,lineHeight:1.5}}>{d.l}</div></div>))}
     </div>
     <table style={{width:"100%",borderCollapse:"collapse",fontSize:14}}>
       <thead><tr style={{borderBottom:"2px solid "+DARK}}>
@@ -125,20 +144,21 @@ function S_Market() {
 
 /* ===== PRODUCT ===== */
 function S_Product() {
+  const m = useM();
   const f=[{t:"Categorized Content Feed",d:"Music, comedy, tech, startups, art — each with trending. AI-driven ranking surfaces emerging talent by category."},{t:"Video & Reels Engine",d:"Short-form reels, long-form video, images, text. Vertical swipe player. HLS adaptive bitrate (240p-1080p). Per-reel analytics."},{t:"Community Layer",d:"Discoverable communities — AI builders, filmmakers, hip-hop. Any founder can create. Activity feeds, member directories, moderation."},{t:"Events Ecosystem",d:"Event listing, RSVP, attendee profiles, community-hosted events. Search by category, city, price. Calendar integration."},{t:"Creator Hub & Profiles",d:"Portfolio, skill tags, collaboration history, endorsements. Verified badges. Content analytics dashboard."},{t:"Founder & Startup Hub",d:"Event/community pages by founders. Co-founder discovery, investor connections. DMs for collaboration."}];
   return (<Sec bg={BG2} id="product">
     <Label text="03 — Product Blueprint" />
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 48px 0", letterSpacing: "-1px" }}>Where LinkedIn Meets Instagram —<br/><span style={{ fontWeight: 700 }}>Purpose-Built for India</span></h2>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 28, marginBottom: 56 }}>
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 36px 0", letterSpacing: "-1px" }}>Where LinkedIn Meets Instagram —<br/><span style={{ fontWeight: 700 }}>Purpose-Built for India</span></h2>
+    <div style={{ display: "grid", gridTemplateColumns: m ? "1fr" : "1fr 1fr 1fr", gap: 28, marginBottom: m ? 36 : 56 }}>
       {[{src:"/vectors/content-feed.png",label:"Categorized Feed"},{src:"/vectors/reels-player.png",label:"Video & Reels"},{src:"/vectors/creator-profile.png",label:"Creator Profiles"}].map((v,i)=>(<div key={i} style={{textAlign:"center"}}>
         <img src={v.src} alt={v.label} style={{width:"100%",maxWidth:200,margin:"0 auto 14px",display:"block"}} />
         <div style={{fontSize:13,fontWeight:600,color:DARK}}>{v.label}</div>
       </div>))}
     </div>
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
-      {f.map((feat,i)=>(<div key={i} style={{ marginBottom: 40, display: "flex", gap: 24, alignItems: "flex-start" }}>
-        <div style={{ fontSize: 48, fontWeight: 200, color: BLUE, lineHeight: 1, flexShrink: 0, width: 56, textAlign: "right", fontFamily: MONO }}>{String(i+1).padStart(2,"0")}</div>
-        <div><div style={{ fontSize: 20, fontWeight: 700, color: DARK, marginBottom: 6 }}>{feat.t}</div><p style={{ fontSize: 14, color: BODY, lineHeight: 1.8, margin: 0 }}>{feat.d}</p></div>
+      {f.map((feat,i)=>(<div key={i} style={{ marginBottom: 36, display: "flex", gap: m ? 16 : 24, alignItems: "flex-start" }}>
+        <div style={{ fontSize: m ? 32 : 48, fontWeight: 200, color: BLUE, lineHeight: 1, flexShrink: 0, width: m ? 40 : 56, textAlign: "right", fontFamily: MONO }}>{String(i+1).padStart(2,"0")}</div>
+        <div><div style={{ fontSize: m ? 17 : 20, fontWeight: 700, color: DARK, marginBottom: 6 }}>{feat.t}</div><p style={{ fontSize: 14, color: BODY, lineHeight: 1.8, margin: 0 }}>{feat.d}</p></div>
       </div>))}
     </div>
   </Sec>);
@@ -146,9 +166,10 @@ function S_Product() {
 
 /* ===== ARCHITECTURE ===== */
 function S_Arch() {
+  const m = useM();
   return (<Sec id="arch">
     <Label text="04 — System Architecture" />
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 12px 0", letterSpacing: "-1px" }}>Production-Grade <span style={{ fontWeight: 700 }}>System Architecture</span></h2>
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 12px 0", letterSpacing: "-1px" }}>Production-Grade <span style={{ fontWeight: 700 }}>System Architecture</span></h2>
     <p style={{ fontSize: 15, color: BODY, lineHeight: 1.9, maxWidth: 560, margin: "0 0 40px 0" }}>Horizontal scalability, low-latency content delivery, millions of concurrent users.</p>
     <div style={{overflowX:"auto",marginBottom:48}}>
       <svg viewBox="0 0 880 720" style={{width:"100%",maxWidth:880}}>
@@ -292,16 +313,17 @@ function S_Data() {
 
 /* ===== TRENDING ===== */
 function S_Trending() {
+  const m = useM();
   return (<Sec id="trending">
     <Label text="06 — Discovery & Virality" />
-    <div style={{ display: "flex", alignItems: "center", gap: 40, marginBottom: 48 }}>
+    <div style={{ display: "flex", flexDirection: m ? "column" : "row", alignItems: m ? "flex-start" : "center", gap: m ? 24 : 40, marginBottom: 48 }}>
       <div style={{ flex: 1 }}>
-        <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 14px 0", letterSpacing: "-1px" }}>How Trending & <span style={{ fontWeight: 700 }}>Communities Work</span></h2>
+        <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 14px 0", letterSpacing: "-1px" }}>How Trending & <span style={{ fontWeight: 700 }}>Communities Work</span></h2>
         <p style={{ fontSize: 15, color: BODY, lineHeight: 1.9, maxWidth: 480, margin: 0 }}>The core differentiator — surfacing emerging talent across categories with weighted scoring and time-decay algorithms.</p>
       </div>
-      <img src="/vectors/virality.png" alt="" style={{ width: 200, flexShrink: 0, opacity: 0.8 }} />
+      {!m && <img src="/vectors/virality.png" alt="" style={{ width: 200, flexShrink: 0, opacity: 0.8 }} />}
     </div>
-    <div style={{ maxWidth: 680, margin: "0 auto", padding: "28px 32px", background: BG2, borderRadius: 4, marginBottom: 48, fontFamily: MONO, fontSize: 12, color: BODY, lineHeight: 1.8 }}>
+    <div style={{ maxWidth: 680, margin: "0 auto", padding: m ? "20px 16px" : "28px 32px", background: BG2, borderRadius: 4, marginBottom: 48, fontFamily: MONO, fontSize: m ? 10 : 12, color: BODY, lineHeight: 1.8, overflowX: "auto" }}>
       <div style={{ fontWeight: 600, color: DARK, marginBottom: 8 }}>Virality Formula</div>
       Score = (Views x 1) + (Likes x 2) + (Comments x 3) + (Shares x 5) + (Saves x 4) * e^(-0.1 * hours_since_post)<br/>
       Trending threshold: category-median + 2 standard deviations. Recalculated every 60 seconds.
@@ -317,9 +339,10 @@ function S_Trending() {
 
 /* ===== DEVOPS ===== */
 function S_DevOps() {
+  const m = useM();
   return (<Sec bg={BG2} id="devops">
     <Label text="07 — DevOps & Security" />
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 48px 0", letterSpacing: "-1px" }}>Deployment, SRE & <span style={{ fontWeight: 700 }}>DevSecOps</span></h2>
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 36px 0", letterSpacing: "-1px" }}>Deployment, SRE & <span style={{ fontWeight: 700 }}>DevSecOps</span></h2>
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {[{t:"DevSecOps & Data Security",d:"OWASP Top 10 compliance at WAF layer. AES-256 at rest, TLS 1.3 in transit. Bcrypt factor 12 with JWT + refresh rotation. AWS Secrets Manager for zero hardcoded credentials. GDPR-aligned data export, deletion, and consent. Dependency scanning via Snyk on every PR."},{t:"Site Reliability Engineering",d:"99.9% uptime SLO with automated alerting. Auto-scale at 70% CPU out, 30% in (2-20 instances). Viral surge handling with pre-warmed CDN and Redis auto-expand. API p99 under 200ms, CDN TTFB under 50ms across India. PgBouncer connection pooling with read replicas."},{t:"Deployment Strategy",d:"Blue/Green deployments via ECS for zero downtime. Feature flags for progressive rollout. Staging mirrors production 1:1. Flyway DB migrations — versioned and reversible. Canary releases: 5%, then 25%, then 100% with automatic rollback. Weekly sprints, bi-weekly releases, under 30 minute hotfix SLA."}].map((s,i)=>(<div key={i} style={{ marginBottom: 36 }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: DARK, marginBottom: 8 }}>{s.t}</div>
@@ -331,10 +354,11 @@ function S_DevOps() {
 
 /* ===== TIMELINE ===== */
 function S_Timeline() {
+  const m = useM();
   const ph=[{p:"Phase 1 — Foundation",dur:"Weeks 1-4",d:"AWS infrastructure via Terraform. CI/CD pipeline. User service with OAuth 2.0 and JWT. Database schemas for PostgreSQL and MongoDB. React Native scaffold with navigation, design system, and auth. Admin dashboard foundation."},{p:"Phase 2 — Core Platform",dur:"Weeks 5-8",d:"Feed engine with algorithmic ranking and category filters. Video upload pipeline through S3, MediaConvert, HLS, and CDN. Reels player with vertical swipe and adaptive bitrate. Community system. ElasticSearch integration. Push notifications."},{p:"Phase 3 — Growth + Launch",dur:"Weeks 9-12",d:"Events system with RSVP and community hosting. Trending engine with category scoring and virality detection. Real-time chat via WebSocket. Creator analytics dashboard. Security audit and pen testing. App Store submission and soft launch."}];
   return (<Sec id="timeline">
     <Label text="08 — Development Roadmap" />
-    <h2 style={{ fontSize: 36, fontWeight: 300, color: DARK, margin: "0 0 48px 0", letterSpacing: "-1px" }}>12-Week <span style={{ fontWeight: 700 }}>MVP Execution Plan</span></h2>
+    <h2 style={{ fontSize: m ? 26 : 36, fontWeight: 300, color: DARK, margin: "0 0 36px 0", letterSpacing: "-1px" }}>12-Week <span style={{ fontWeight: 700 }}>MVP Execution Plan</span></h2>
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {ph.map((p,i)=>(<div key={i} style={{ display: "flex", gap: 24, marginBottom: 40, alignItems: "flex-start" }}>
         <div style={{ fontSize: 48, fontWeight: 200, color: BLUE, lineHeight: 1, flexShrink: 0, width: 56, textAlign: "right", fontFamily: MONO }}>{String(i+1).padStart(2,"0")}</div>
@@ -373,11 +397,12 @@ function S_Team() {
 
 /* ===== PRICING ===== */
 function S_Engagement() {
+  const m = useM();
   return (<><Sec id="terms">
     <Label text="10 — Partnership Terms" />
     <div style={{ textAlign: "center", maxWidth: 680, margin: "0 auto", marginBottom: 56 }}>
       <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: MUTED, fontFamily: MONO, marginBottom: 12 }}>Development Cost</div>
-      <div style={{ fontSize: 68, fontWeight: 800, color: DARK, letterSpacing: "-3px", lineHeight: 1 }}>5,00,000</div>
+      <div style={{ fontSize: m ? 48 : 68, fontWeight: 800, color: DARK, letterSpacing: "-2px", lineHeight: 1 }}>5,00,000</div>
       <div style={{ fontSize: 15, color: BODY, marginTop: 8 }}>INR — Full MVP Development</div>
     </div>
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
@@ -393,16 +418,16 @@ function S_Engagement() {
       </div>
     </div>
   </Sec>
-  <div style={{ background: DARK, padding: "128px 48px", textAlign: "center" }}>
+  <div style={{ background: DARK, padding: m ? "64px 20px" : "128px 48px", textAlign: "center" }}>
     <div style={{ maxWidth: 560, margin: "0 auto" }}>
-      <h2 style={{ fontSize: 36, fontWeight: 300, color: "#ffffff", margin: "0 0 16px 0", letterSpacing: "-0.5px" }}>Let's Build Celebso Together</h2>
-      <p style={{ fontSize: 15, color: "#94a3b8", lineHeight: 1.9, margin: "0 0 40px 0" }}>Your vision is validated. The platform is ready to be built. We are ready to build it.</p>
-      <div style={{ display: "flex", justifyContent: "center", gap: 56, fontSize: 13 }}>
-        {[{l:"Schedule",v:"cal.com/uddit-jl3ic4"},{l:"Email",v:"udditalerts247@gmail.com"},{l:"Phone",v:"+91 7456 886 877"}].map((c,i)=>(<div key={i}><div style={{color:"#64748b",fontSize:9,letterSpacing:1,textTransform:"uppercase",marginBottom:6,fontFamily:MONO}}>{c.l}</div><div style={{color:"#e2e8f0",fontWeight:500}}>{c.v}</div></div>))}
+      <h2 style={{ fontSize: m ? 24 : 36, fontWeight: 300, color: "#ffffff", margin: "0 0 16px 0", letterSpacing: "-0.5px" }}>Let's Build Celebso Together</h2>
+      <p style={{ fontSize: m ? 14 : 15, color: "#94a3b8", lineHeight: 1.9, margin: "0 0 32px 0" }}>Your vision is validated. The platform is ready to be built. We are ready to build it.</p>
+      <div style={{ display: "flex", flexDirection: m ? "column" : "row", justifyContent: "center", gap: m ? 20 : 56, fontSize: 13 }}>
+        {[{l:"Schedule",v:"cal.com/uddit-jl3ic4"},{l:"Email",v:"udditalerts247@gmail.com"},{l:"Phone",v:"+91 7456 886 877"}].map((c,i)=>(<div key={i}><div style={{color:"#64748b",fontSize:9,letterSpacing:1,textTransform:"uppercase",marginBottom:4,fontFamily:MONO}}>{c.l}</div><div style={{color:"#e2e8f0",fontWeight:500,fontSize: m ? 12 : 13}}>{c.v}</div></div>))}
       </div>
     </div>
   </div>
-  <div style={{ padding: "32px 48px", borderTop: "1px solid " + BORDER, display: "flex", justifyContent: "space-between", fontSize: 11, color: MUTED, lineHeight: 1.6, background: BG1 }}>
+  <div style={{ padding: m ? "24px 20px" : "32px 48px", borderTop: "1px solid " + BORDER, display: "flex", flexDirection: m ? "column" : "row", justifyContent: "space-between", gap: m ? 12 : 0, fontSize: 11, color: MUTED, lineHeight: 1.6, background: BG1 }}>
     <div>Prepared by Uddit &middot; uddit.site &middot; linkedin.com/in/lorduddit- &middot; github.com/UDDITwork</div>
     <div>Celebso &middot; celebso.com &middot; Er. Veer Singh &middot; Pradeep Kumar Bijarniya</div>
     <div>REF: CBL-2026-0318 &middot; 18 March 2026</div>
@@ -411,15 +436,16 @@ function S_Engagement() {
 
 /* ===== LEGAL ===== */
 function S_Legal() {
+  const m = useM();
   const p = { fontSize: 13, color: "#1e293b", lineHeight: 2, margin: "0 0 18px 0", fontFamily: "Georgia, 'Times New Roman', serif" };
   const h = { fontSize: 13, fontWeight: 700, color: DARK, margin: "32px 0 10px 0", fontFamily: "Georgia, 'Times New Roman', serif" };
-  return (<div style={{ padding: "96px 48px", background: "#fefefe" }} id="legal">
-    <div style={{ maxWidth: 680, margin: "0 auto", border: "1px solid " + BORDER, borderRadius: 2, padding: "64px 56px", background: "#ffffff" }}>
+  return (<div style={{ padding: m ? "48px 20px" : "96px 48px", background: "#fefefe" }} id="legal">
+    <div style={{ maxWidth: 680, margin: "0 auto", border: "1px solid " + BORDER, borderRadius: 2, padding: m ? "32px 20px" : "64px 56px", background: "#ffffff" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48, paddingBottom: 28, borderBottom: "2px solid " + DARK }}>
         <div><div style={{ fontWeight: 700, fontSize: 18, color: DARK, fontFamily: "Georgia, serif" }}>CELEBSO</div><div style={{ fontSize: 11, color: MUTED, marginTop: 4, fontFamily: "Georgia, serif" }}>Technical Development Partnership</div></div>
         <div style={{ textAlign: "right", fontFamily: "Georgia, serif" }}><div style={{ fontSize: 12, fontWeight: 600, color: DARK }}>18 March 2026</div><div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>Ref: CBL-2026-0318/LEG</div></div>
       </div>
-      <div style={{ marginBottom: 36, padding: "20px 24px", background: "#fafafa", border: "1px solid " + BORDER, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontFamily: "Georgia, serif" }}>
+      <div style={{ marginBottom: 36, padding: m ? "16px" : "20px 24px", background: "#fafafa", border: "1px solid " + BORDER, display: "grid", gridTemplateColumns: m ? "1fr" : "1fr 1fr", gap: m ? 20 : 24, fontFamily: "Georgia, serif" }}>
         <div><div style={{ fontSize: 10, fontWeight: 700, color: MUTED, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>From (Developer)</div><div style={{ fontSize: 13, fontWeight: 600, color: DARK }}>Uddit</div><div style={{ fontSize: 12, color: BODY, lineHeight: 1.6 }}>AI Engineer & Full Stack Developer<br/>NIT Jaipur, Rajasthan, India<br/>udditalerts247@gmail.com</div></div>
         <div><div style={{ fontSize: 10, fontWeight: 700, color: MUTED, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>To (Client)</div><div style={{ fontSize: 13, fontWeight: 600, color: DARK }}>Er. Veer Singh & Pradeep Kumar Bijarniya</div><div style={{ fontSize: 12, color: BODY, lineHeight: 1.6 }}>Celebso (Ooglesoft Private Limited)<br/>Jaipur, Rajasthan, India<br/>www.celebso.com</div></div>
       </div>
@@ -427,11 +453,11 @@ function S_Legal() {
       <p style={p}>Dear Er. Veer Singh and Mr. Pradeep Kumar Bijarniya,</p>
       <p style={p}>This letter sets forth the binding terms and conditions governing the technical development partnership between the undersigned parties for the Celebso platform. By executing this agreement or commencing work pursuant to the accompanying Technical Proposal (Ref: CBL-2026-0318), both parties acknowledge and agree to be bound by the terms outlined herein.</p>
       <div style={h}>1. Scope of Work</div>
-      <p style={p}>The Developer shall design, develop, test, and deploy the Celebso platform as described in the accompanying Technical Proposal, including but not limited to: (a) mobile applications for iOS and Android using React Native; (b) a web application built with Next.js; (c) an administrative dashboard; (d) backend microservices architecture on AWS; (e) video/reels pipeline with CDN delivery; (f) community, events, trending, and search systems; and (g) CI/CD pipeline and DevOps infrastructure.</p>
+      <p style={p}>The Developer shall design, develop, test, and deploy the Celebso platform as described in the accompanying Technical Proposal, including but not limited to mobile applications for iOS and Android using React Native, a web application built with Next.js, an administrative dashboard, backend microservices architecture on AWS, video/reels pipeline with CDN delivery, community, events, trending, and search systems, and CI/CD pipeline and DevOps infrastructure.</p>
       <div style={h}>2. Project Timeline & Milestones</div>
       <p style={p}>The project shall be executed over twelve (12) weeks from the date of the first milestone payment. Each phase concludes with a deliverable review and milestone payment. Delays caused by the Client shall extend the timeline by an equivalent period without penalty to the Developer.</p>
       <div style={h}>3. Compensation & Payment Terms</div>
-      <p style={p}>The total project fee is INR 5,00,000 (Indian Rupees Five Lakhs Only), payable as follows: (a) INR 1,50,000 (30%) upon execution; (b) INR 1,00,000 (20%) upon Phase 1 completion; (c) INR 1,25,000 (25%) upon Phase 2 completion; (d) INR 1,25,000 (25%) upon launch. Late payments exceeding fifteen (15) days shall accrue interest at 1.5% per month.</p>
+      <p style={p}>The total project fee is INR 5,00,000 (Indian Rupees Five Lakhs Only), payable as follows: INR 1,50,000 (30%) upon execution, INR 1,00,000 (20%) upon Phase 1 completion, INR 1,25,000 (25%) upon Phase 2 completion, and INR 1,25,000 (25%) upon final delivery and launch. Late payments exceeding fifteen (15) days shall accrue interest at 1.5% per month.</p>
       <div style={h}>4. Confidentiality & Non-Disclosure</div>
       <p style={p}>Both parties agree to maintain strict confidentiality regarding all proprietary information exchanged during this engagement. This obligation survives termination for three (3) years. Neither party shall disclose such information to any third party without prior written consent.</p>
       <div style={h}>5. Intellectual Property Rights</div>
@@ -469,6 +495,7 @@ function S_Legal() {
 const SECS=[{id:"cover",label:"Cover"},{id:"vision",label:"Vision"},{id:"market",label:"Market"},{id:"product",label:"Product"},{id:"arch",label:"Architecture"},{id:"data",label:"Data"},{id:"trending",label:"Trending"},{id:"devops",label:"DevOps"},{id:"timeline",label:"Roadmap"},{id:"team",label:"Team"},{id:"terms",label:"Terms"},{id:"legal",label:"Legal"}];
 
 export default function CelebsoProposal() {
+  const mobile = useIsMobile();
   const [active, setActive] = useState(0);
   const ref = useRef(null);
   useEffect(() => {
@@ -480,13 +507,13 @@ export default function CelebsoProposal() {
   }, []);
   const go = (i) => { const els = ref.current.querySelectorAll("[data-s]"); if (els[i]) els[i].scrollIntoView({ behavior: "smooth" }); };
 
-  return (<div style={{ fontFamily: SANS, background: BG1, color: BODY, height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+  return (<MobileCtx.Provider value={mobile}><div style={{ fontFamily: SANS, background: BG1, color: BODY, height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 24px", borderBottom: "1px solid " + BORDER, background: BG1, zIndex: 10, flexShrink: 0 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <img src={FOUNDER_IMG.LOGO} alt="Celebso" width={20} height={20} style={{ borderRadius: 4 }} />
         <span style={{ fontWeight: 700, fontSize: 14, color: DARK }}>CELEBSO</span>
       </div>
-      <div style={{ display: "flex", gap: 1 }}>
+      <div className="nav-sections" style={{ display: "flex", gap: 1 }}>
         {SECS.map((s, i) => (<button key={s.id} onClick={() => go(i)} style={{ padding: "4px 10px", fontSize: 10, fontWeight: i === active ? 600 : 400, color: i === active ? DARK : MUTED, background: "transparent", border: "none", cursor: "pointer", fontFamily: SANS, transition: "color 200ms", borderBottom: i === active ? "1.5px solid " + DARK : "1.5px solid transparent" }}>{s.label}</button>))}
       </div>
       <span style={{ fontSize: 10, color: MUTED, fontFamily: MONO }}>18 Mar 2026</span>
@@ -494,5 +521,5 @@ export default function CelebsoProposal() {
     <div ref={ref} style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
       {[S_Cover, S_Alignment, S_Market, S_Product, S_Arch, S_Data, S_Trending, S_DevOps, S_Timeline, S_Team, S_Engagement, S_Legal].map((Comp, i) => (<div key={i} data-s={SECS[i]?.id}><Comp /></div>))}
     </div>
-  </div>);
+  </div></MobileCtx.Provider>);
 }
